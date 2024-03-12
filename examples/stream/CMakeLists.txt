@@ -1,7 +1,7 @@
 if (WHISPER_SDL2)
     # stream
     set(TARGET stream)
-    add_executable(${TARGET} stream.cpp)
+    add_executable(${TARGET} stream2.cpp audio_capturer.cpp)
 
     include(DefaultTargetOptions)
 
