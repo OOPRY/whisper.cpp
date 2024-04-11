@@ -1,5 +1,8 @@
 cmake_minimum_required (VERSION 3.5)
 
+# Allow for the creation of solution folders.
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 project(whisper.cpp VERSION 1.5.4)
 set(SOVERSION 1)
 
@@ -79,6 +82,7 @@ else()
     option(WHISPER_CUBLAS                "whisper: support for CUDA (deprecated)"             OFF)
     option(WHISPER_HIPBLAS               "whisper: support for hipBLAS"                       OFF)
     option(WHISPER_CLBLAST               "whisper: use CLBlast"                               OFF)
+    option(WHISPER_MKL                   "whisper: use Intel Math Kernel Library (MKL)"       OFF)
     option(WHISPER_SYCL                  "whisper: use SYCL"                                  OFF)
     option(WHISPER_SYCL_F16              "whisper: use 16 bit floats for sycl calculations"   OFF)
 endif()
@@ -292,6 +296,13 @@ if (WHISPER_BLAS)
         endif()
     endif ()
 endif ()
+
+if (WHISPER_MKL)
+    find_package(MKL CONFIG REQUIRED PATHS $ENV{MKLROOT})
+    message(STATUS "Imported oneMKL targets: ${MKL_IMPORTED_TARGETS}")
+    set(WHISPER_EXTRA_FLAGS ${WHISPER_EXTRA_FLAGS} -DGGML_USE_OPENBLAS)
+    set(WHISPER_EXTRA_FLAGS ${WHISPER_EXTRA_FLAGS} -DGGML_BLAS_USE_MKL)
+endif()
 
 if (WHISPER_CUBLAS)
     message(WARNING "WHISPER_CUBLAS is deprecated and will be removed in the future.\nUse WHISPER_CUDA instead")
@@ -561,6 +572,7 @@ if (WHISPER_COREML)
     set_target_properties(${TARGET} PROPERTIES
         COMPILE_FLAGS "-fobjc-arc"
         )
+    set_target_properties(${TARGET} PROPERTIES FOLDER "libs")
 endif()
 
 if (WHISPER_OPENVINO)
@@ -579,6 +591,7 @@ if (WHISPER_OPENVINO)
     set(WHISPER_EXTRA_FLAGS ${WHISPER_EXTRA_FLAGS} -DWHISPER_USE_OPENVINO)
 
     target_link_libraries(${TARGET} PRIVATE openvino::runtime)
+    set_target_properties(${TARGET} PROPERTIES FOLDER "libs")
 endif()
 
 #
@@ -623,6 +636,10 @@ endif()
 
 if (WHISPER_OPENVINO)
     target_link_libraries(${TARGET} PRIVATE whisper.openvino)
+endif()
+
+if (WHISPER_MKL)
+    target_link_libraries(${TARGET} PUBLIC MKL::MKL)
 endif()
 
 if (MSVC)
@@ -677,6 +694,7 @@ target_compile_definitions(${TARGET} PUBLIC
     )
 
 set_target_properties(${TARGET} PROPERTIES PUBLIC_HEADER "ggml.h;whisper.h")
+set_target_properties(${TARGET} PROPERTIES FOLDER "libs")
 
 include(GNUInstallDirs)
 

@@ -455,6 +455,21 @@ make clean
 WHISPER_OPENBLAS=1 make -j
 ```
 
+## BLAS CPU support via Intel MKL
+
+Encoder processing can be accelerated on the CPU via the BLAS compatible interface of Intel's Math Kernel Library.
+First, make sure you have installed Intel's MKL runtime and development packages: https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl-download.html
+
+Now build `whisper.cpp` with Intel MKL BLAS support:
+
+```
+source /opt/intel/oneapi/setvars.sh
+mkdir build
+cd build
+cmake -DWHISPER_MKL=ON ..
+WHISPER_MKL=1 make -j
+```
+
 ## Docker
 
 ### Prerequisites
@@ -729,10 +744,10 @@ https://user-images.githubusercontent.com/1991296/199337538-b7b0c7a3-2753-4a88-a
 
 ## Video comparison of different models
 
-Use the [extra/bench-wts.sh](https://github.com/ggerganov/whisper.cpp/blob/master/extra/bench-wts.sh) script to generate a video in the following format:
+Use the [scripts/bench-wts.sh](https://github.com/ggerganov/whisper.cpp/blob/master/scripts/bench-wts.sh) script to generate a video in the following format:
 
 ```bash
-./extra/bench-wts.sh samples/jfk.wav
+./scripts/bench-wts.sh samples/jfk.wav
 ffplay ./samples/jfk.wav.all.mp4
 ```
 
@@ -753,7 +768,7 @@ Additionally a script to run whisper.cpp with different models and audio files i
 You can run it with the following command, by default it will run against any standard model in the models folder.
 
 ```bash
-python3 extra/bench.py -f samples/jfk.wav -t 2,4,8 -p 1,2
+python3 scripts/bench.py -f samples/jfk.wav -t 2,4,8 -p 1,2
 ```
 
 It is written in python with the intention of being easy to modify and extend for your benchmarking use case.
