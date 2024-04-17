@@ -201,8 +201,6 @@ if (APPLE)
 
             set(GGML_SOURCES_METAL ${GGML_SOURCES_METAL} ${EMBED_METALLIB_ASSEMBLY})
         endif()
-        # copy ggml-metal.metal to bin directory
-        configure_file(ggml-metal.metal ${CMAKE_BINARY_DIR}/ggml-metal.metal COPYONLY)
     endif()
 
     if (WHISPER_COREML)
