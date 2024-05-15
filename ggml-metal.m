@@ -375,11 +375,7 @@ static struct ggml_metal_context * ggml_metal_init(int n_cb) {
                 GGML_METAL_LOG_ERROR("%s: error: %s\n", __func__, [[error description] UTF8String]);
                 return NULL;
             }
-<<<<<<< HEAD
 #endif // GGML_METAL_EMBED_LIBRARY
-=======
-#endif
->>>>>>> 1f00fe9 (metal : option to embed MSL source into compiled binary (#1842))
 
             @autoreleasepool {
                 // dictionary of preprocessor macros
